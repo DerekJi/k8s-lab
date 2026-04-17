@@ -1,0 +1,24 @@
+# Build results
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.suo
+*.sln.docstates
+
+# User-specific files
+*.user
+*.userosscache
+*.sln.user
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
