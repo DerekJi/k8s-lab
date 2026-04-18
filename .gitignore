@@ -22,3 +22,6 @@ obj/
 
 # Environment
 .env
+
+# cache
+.cache/

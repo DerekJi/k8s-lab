@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnet-lab-api
+  namespace: derek-local
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dotnet-lab-api
+  template:
+    metadata:
+      labels:
+        app: dotnet-lab-api
+    spec:
+      containers:
+        - name: dotnet-lab-api
+          image: mcr.microsoft.com/dotnet/samples:aspnetapp-nanoserver-ltsc2022
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
