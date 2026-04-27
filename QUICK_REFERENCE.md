@@ -18,6 +18,45 @@ bash start-swagger.sh          # 默认端口 5555
 bash start-swagger.sh 8080     # 自定义端口
 ```
 
+## 📦 本地 Registry / 镜像部署
+
+### 推荐流程：构建镜像并加载到集群
+
+```bash
+# 1. 构建镜像
+cd src/Lab.Api
+podman build -t localhost:5000/weather-api:latest .
+cd ../..
+
+# 2. 加载到 K8s 集群（最可靠的方式）
+podman save -o weather-api.tar localhost:5000/weather-api:latest
+kind load image-archive weather-api.tar --name k8s-new
+rm weather-api.tar
+
+# 3. 部署应用
+kubectl apply -f deployment.yml
+```
+
+### 更新镜像（代码变更后）
+```bash
+# 1. 重新构建
+cd src/Lab.Api && podman build -t localhost:5000/weather-api:latest .
+
+# 2. 重新加载
+cd ../.. && podman save -o weather-api.tar localhost:5000/weather-api:latest
+kind load image-archive weather-api.tar --name k8s-new && rm weather-api.tar
+
+# 3. 重启应用
+kubectl rollout restart deployment/dotnet-lab-api -n derek-local
+```
+
+### Registry 信息
+- **本地存储位置**: K8s 集群内部 (`docker-registry` namespace)
+- **Registry 服务地址**: `docker-registry.docker-registry.svc.cluster.local:5000`
+- **查看镜像**: `kind get images --name k8s-new | grep weather`
+
+📚 完整指南见: [REGISTRY_DEPLOYMENT_COMPLETE.md](REGISTRY_DEPLOYMENT_COMPLETE.md)
+
 ## 故障排查
 
 ### 问题: Swagger 无法访问

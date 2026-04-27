@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: dotnet-lab-api
-          image: mcr.microsoft.com/dotnet/samples:aspnetapp-nanoserver-ltsc2022
-          imagePullPolicy: IfNotPresent
+          image: 10.96.27.59:5000/weather-api:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

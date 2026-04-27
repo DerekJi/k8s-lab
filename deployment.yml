@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: dotnet-lab-api
-          image: localhost/dotnet-webapi:latest   # 你本地构建的镜像名
-          imagePullPolicy: IfNotPresent # 优先用本地镜像
+          image: 10.96.27.59:5000/weather-api:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
