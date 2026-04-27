@@ -4,7 +4,8 @@
 
 set -e
 
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$PROJECT_DIR"
 
 echo "=========================================="
@@ -23,7 +24,7 @@ POD=$(kubectl get pods -n derek-local -o jsonpath='{.items[0].metadata.name}' 2>
 
 if [ -z "$POD" ]; then
     echo "❌ 错误：找不到应用 Pod"
-    echo "请先运行: kubectl apply -f deployment.yml"
+    echo "请先运行: kubectl apply -f k8s/app/deployment.yml"
     exit 1
 fi
 

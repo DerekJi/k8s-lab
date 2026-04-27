@@ -4,8 +4,11 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
 echo "=== 1. 部署本地 Docker Registry ==="
-kubectl apply -f registry-deployment.yml
+kubectl apply -f "$PROJECT_ROOT/k8s/infrastructure/registry.yml"
 echo "✓ Registry 部署完成"
 
 echo ""
@@ -23,7 +26,7 @@ echo "Registry 地址: $REGISTRY_IP:5000"
 
 echo ""
 echo "=== 4. 构建 WeatherApi 镜像 ==="
-cd ./src/Lab.Api
+cd "$PROJECT_ROOT/src/Lab.Api"
 docker build -t localhost:5000/weather-api:latest .
 echo "✓ 镜像构建完成: localhost:5000/weather-api:latest"
 
@@ -34,10 +37,9 @@ echo "✓ 镜像推送完成"
 
 echo ""
 echo "=== 6. 部署应用到 Kubernetes ==="
-cd ../../
-kubectl apply -f deployment.yml
-kubectl apply -f service.yml
-kubectl apply -f ingress.yml
+kubectl apply -f "$PROJECT_ROOT/k8s/app/deployment.yml"
+kubectl apply -f "$PROJECT_ROOT/k8s/app/service.yml"
+kubectl apply -f "$PROJECT_ROOT/k8s/app/ingress.yml"
 echo "✓ 应用部署完成"
 
 echo ""

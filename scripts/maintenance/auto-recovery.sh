@@ -5,7 +5,8 @@
 
 set -e
 
-PROJECT_DIR="/d/source/k8s-lab"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CLUSTER_NAME="kind-cluster"
 NAMESPACE="derek-local"
 IMAGE_NAME="localhost/dotnet-webapi:latest"
@@ -90,8 +91,8 @@ echo ""
 echo "✓ 步骤 7: 部署应用..."
 cd "$PROJECT_DIR"
 kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f - > /dev/null 2>&1
-kubectl apply -f deployment.yml > /dev/null 2>&1
-kubectl apply -f service.yml > /dev/null 2>&1
+kubectl apply -f "$PROJECT_DIR/k8s/app/deployment.yml" > /dev/null 2>&1
+kubectl apply -f "$PROJECT_DIR/k8s/app/service.yml" > /dev/null 2>&1
 echo "✓ 应用已部署"
 
 # 步骤 8: 等待 Pod 就绪
@@ -125,6 +126,6 @@ echo "2️⃣  访问 Swagger UI:"
 echo "   curl http://localhost:$PORT/swagger/index.html"
 echo ""
 echo "3️⃣  或直接运行："
-echo "   bash start-swagger.sh"
+echo "   bash "$SCRIPT_DIR/../start/start-swagger.sh""
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

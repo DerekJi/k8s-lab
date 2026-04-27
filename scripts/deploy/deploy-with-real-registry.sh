@@ -4,6 +4,9 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
 echo "========================================="
 echo "本地 Registry 完整部署流程"
 echo "========================================="
@@ -11,7 +14,7 @@ echo ""
 
 # Step 1: 确保 Registry 运行
 echo "=== Step 1: 部署 Registry ==="
-kubectl apply -f registry-deployment.yml
+kubectl apply -f "$PROJECT_ROOT/k8s/infrastructure/registry.yml"
 echo "✓ Registry 部署完成"
 echo ""
 
@@ -31,9 +34,9 @@ echo ""
 
 # Step 4: 构建镜像
 echo "=== Step 4: 构建镜像 ==="
-cd src/Lab.Api
+cd "$PROJECT_ROOT/src/Lab.Api"
 podman build -t localhost:5000/weather-api:latest .
-cd ../..
+cd "$PROJECT_ROOT"
 echo "✓ 镜像构建完成"
 echo ""
 
@@ -74,7 +77,7 @@ echo ""
 
 # Step 8: 更新 deployment 使用 Registry 中的镜像
 echo "=== Step 8: 更新应用配置 ==="
-cat > deployment.yml << 'EOF'
+cat > "$PROJECT_ROOT/k8s/app/deployment.yml" << 'EOF'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -100,14 +103,14 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
 EOF
-echo "✓ deployment.yml 已更新为使用 Registry"
+echo "✓ k8s/app/deployment.yml 已更新为使用 Registry"
 echo ""
 
 # Step 9: 部署应用
 echo "=== Step 9: 部署应用 ==="
-kubectl apply -f deployment.yml
-kubectl apply -f service.yml
-kubectl apply -f ingress.yml
+kubectl apply -f "$PROJECT_ROOT/k8s/app/deployment.yml"
+kubectl apply -f "$PROJECT_ROOT/k8s/app/service.yml"
+kubectl apply -f "$PROJECT_ROOT/k8s/app/ingress.yml"
 echo "✓ 应用部署完成"
 echo ""
 

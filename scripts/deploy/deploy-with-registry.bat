@@ -1,8 +1,10 @@
 @echo off
 setlocal enabledelayedexpansion
 
+set "PROJECT_ROOT=%~dp0..\.."
+
 echo === 1. 部署本地 Docker Registry ===
-kubectl apply -f registry-deployment.yml
+kubectl apply -f "%PROJECT_ROOT%\k8s\infrastructure\registry.yml"
 if %errorlevel% neq 0 (
     echo Registry 部署失败
     exit /b 1
@@ -20,7 +22,7 @@ echo Registry 已就绪
 
 echo.
 echo === 3. 构建 WeatherApi 镜像 ===
-cd src\Lab.Api
+cd %PROJECT_ROOT%\src\Lab.Api
 docker build -t localhost:5000/weather-api:latest .
 if %errorlevel% neq 0 (
     echo 镜像构建失败
@@ -39,10 +41,9 @@ echo 镜像推送完成
 
 echo.
 echo === 5. 部署应用到 Kubernetes ===
-cd ..\..\
-kubectl apply -f deployment.yml
-kubectl apply -f service.yml
-kubectl apply -f ingress.yml
+kubectl apply -f "%PROJECT_ROOT%\k8s\app\deployment.yml"
+kubectl apply -f "%PROJECT_ROOT%\k8s\app\service.yml"
+kubectl apply -f "%PROJECT_ROOT%\k8s\app\ingress.yml"
 echo 应用部署完成
 
 echo.
